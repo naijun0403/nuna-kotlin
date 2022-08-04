@@ -25,6 +25,13 @@
 > 
 > 이후 추가 업데이트로 `Long`을 넣을수도 있으나, 기본적으로 `Int`형의 범위가 같습니다.
 
+### `!` 키워드는 어떤방식으로 출력합니까?
+> 코틀린에는 `Int` 클래스에 `toChar`이라는 메소드가 있습니다.
+> 
+> 해당 메소드를 이용하여 `stack`에서 `pop` 한 정수를 바꿔서 `stringBuilder`에 `append`합니다.
+> 
+> 이후 리턴할때 `stringBuilder`를 `toString`해 리턴합니다.
+
 ## example
 ```kotlin
 import org.nuna.NunaContext
