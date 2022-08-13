@@ -25,18 +25,26 @@
 package org.nuna
 
 import org.nuna.ir.Interpreter
+import org.nuna.option.OptionManager
 import org.nuna.parser.Parser
 import java.io.Closeable
 import java.util.*
 
-class NunaContext private constructor() : Closeable {
+class NunaContext private constructor(
+    val options: Map<String, String>
+) : Closeable {
 
     private var stack: Stack<Int> = Stack()
 
     companion object {
 
+        fun newBuilder(): Builder {
+            return Builder()
+        }
+
         fun create(): NunaContext {
-            return NunaContext()
+            val builder = Builder()
+            return builder.build()
         }
 
     }
@@ -47,7 +55,8 @@ class NunaContext private constructor() : Closeable {
 
     fun exec(script: String): Value {
         val irList = Interpreter(script).interpretingByScript()
-        val parser = Parser.createByIRModelList(irList, stack)
+        val option = OptionManager(options)
+        val parser = Parser.createByIRModelList(irList, stack, option)
         parser.parseTokens() // run
         return ValueImpl(
             parser
@@ -56,6 +65,21 @@ class NunaContext private constructor() : Closeable {
 
     override fun close() {
         stack = Stack()
+    }
+
+    class Builder {
+
+        private val map = HashMap<String, String>()
+
+        fun addOption(key: String, value: String): Builder {
+            map[key] = value
+            return this
+        }
+
+        fun build(): NunaContext {
+            return NunaContext(map)
+        }
+
     }
 
 }

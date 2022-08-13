@@ -26,6 +26,7 @@ package org.nuna.parser
 
 import org.nuna.exception.SyntaxException
 import org.nuna.model.IRDataModel
+import org.nuna.option.OptionManager
 import org.nuna.token.Token
 import org.nuna.util.CharUtil
 import java.util.Stack
@@ -33,7 +34,8 @@ import kotlin.math.pow
 
 internal class Parser(
     private val irList: List<IRDataModel>,
-    private val stack: Stack<Int> = Stack()
+    private val stack: Stack<Int> = Stack(),
+    private val option: OptionManager
 ) {
 
     private var current = 0
@@ -135,12 +137,13 @@ internal class Parser(
             }
 
             Token.EXCLAMATION_MARK -> {
-                println(stack)
-
                 val charCode = stack.pop()
 
                 val char = CharUtil.toStringUTF16(charCode)
 
+                if (option.enableStdout) {
+                    println(char)
+                }
                 stringBuilder.append(char)
             }
 
@@ -218,10 +221,11 @@ internal class Parser(
     }
 
     companion object {
-        fun createByIRModelList(irList: List<IRDataModel>, stack: Stack<Int> = Stack()): Parser {
+        fun createByIRModelList(irList: List<IRDataModel>, stack: Stack<Int> = Stack(), option: OptionManager): Parser {
             return Parser(
                 irList,
-                stack
+                stack,
+                option
             )
         }
     }
